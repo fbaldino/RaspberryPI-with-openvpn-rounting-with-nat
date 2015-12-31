@@ -1,0 +1,10 @@
+sudo openvpn --config vpnbook-us2-tcp443.ovpn  --auth-user-pass openvpncredentials &
+sleep 60
+##working
+# Allow postrouting to tun0. You may want to use "-s" here to strictly limit forwarding to IPs on your LAN.
+sudo iptables -t nat -A POSTROUTING -o tun1  -j MASQUERADE
+
+# Enable forwarding from the LAN to the VPN (and back via related and established connections).
+# Again, you may want to use "-s".
+sudo iptables -A FORWARD -i eth0:0  -o tun1 -j ACCEPT
+sudo iptables -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
